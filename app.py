@@ -122,12 +122,7 @@ if st.button("📈 분석 시작", use_container_width=True):
             year_df,
             use_container_width=True,
             height=500
-                if "흑자" in val:
-                    return "color: green; font-weight:bold"
-                elif "적자" in val:
-                    return "color: red; font-weight:bold"
-            return ""
-        )
+
 
         # AI 분석
         max_import_city = year_df.sort_values(by='수입액', ascending=False).iloc[0]['행정구역']
