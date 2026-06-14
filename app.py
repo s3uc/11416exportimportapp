@@ -126,11 +126,7 @@ if st.button("📈 분석 시작", use_container_width=True):
                     return "color: red; font-weight:bold"
             return ""
 
-        styled_df = year_df.style.applymap(
-            color_trade,
-            subset=["상태"]
-        )
-
+ 
         st.dataframe(
             styled_df,
             use_container_width=True,
