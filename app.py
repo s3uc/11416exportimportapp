@@ -14,7 +14,25 @@ st.set_page_config(
 )
 
 # =========================
-# CSS
+st.markdown("""
+<style>
+
+.stApp {
+    background: linear-gradient(
+        180deg,
+        #f4f8fc 0%,
+        #ffffff 100%
+    );
+}
+
+.title {
+    text-align:center;
+    color:#0f172a;
+    font-weight:700;
+}
+
+</style>
+""", unsafe_allow_html=True)
 # =========================
 
 st.markdown("""
