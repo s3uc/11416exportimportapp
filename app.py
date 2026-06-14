@@ -67,15 +67,15 @@ if st.button("📈 분석 시작", use_container_width=True):
      
       if ex_col not in df.columns or im_col not in df.columns:
           st.error(f"{year}년 데이터가 존재하지 않습니다.")
-    else:
+      else:
+          year_df = df[['행정구역(시군)별(1)', ex_col, im_col]].copy()
+          year_df.columns = ['행정구역', '수출액', '수입액']
+          year_df['무역수지'] = year_df['수출액'] - year_df['수입액']
+          year_df['상태'] = year_df['무역수지'].apply(
+              lambda x: "🟢 흑자" if x >= 0 else "🔴 적자"      
+        
 
-        # 데이터 추출
-        year_df = df[['행정구역(시군)별(1)', ex_col, im_col]].copy()
-        year_df.columns = ['행정구역', '수출액', '수입액']
-
-        year_df['무역수지'] = year_df['수출액'] - year_df['수입액']
-        year_df['상태'] = year_df['무역수지'].apply(
-            lambda x: "🟢 흑자" if x >= 0 else "🔴 적자"
+  
         )
 
         # 요약 계산
