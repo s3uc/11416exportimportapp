@@ -118,15 +118,15 @@ if st.button("📈 분석 시작", use_container_width=True):
         # 데이터 테이블
         st.subheader("🏙️ 시군별 세부 현황")
 
-        def color_trade(val):
-            if isinstance(val, str):
+        st.dataframe(
+            year_df,
+            use_container_width=True,
+            height=500
                 if "흑자" in val:
                     return "color: green; font-weight:bold"
                 elif "적자" in val:
                     return "color: red; font-weight:bold"
             return ""
-
- 
         )
 
         # AI 분석
