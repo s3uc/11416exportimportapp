@@ -35,17 +35,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 💡 [수정됨] 데이터 불러오기 (캐싱 적용으로 속도 향상)
-@st.cache_data
-def load_data():
-    file_name = "your_file.csv" # 실제 가지고 계신 파일 이름으로 변경하세요!
-    
-    # 파일이 존재하는지 먼저 확인
-    if os.path.exists(file_name):
-        return pd.read_csv(file_name)
-    else:
-        st.error(f"⚠️ '{file_name}' 파일을 찾을 수 없습니다. 파이썬 파일과 같은 폴더에 있는지 확인해주세요.")
-        return None
 
 # 데이터 로드 실행
 df = load_data()
