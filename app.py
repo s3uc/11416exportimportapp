@@ -122,6 +122,7 @@ if st.button("📈 분석 시작", use_container_width=True):
             year_df,
             use_container_width=True,
             height=500
+        )
 
 
         # AI 분석
