@@ -63,8 +63,8 @@ year = st.selectbox(
 
 if st.button("📈 분석 시작", use_container_width=True):
 
-    ex_col = f"{year}수출"
-    im_col = f"{year}수입"
+ex_col = f"{year}수출"
+im_col = f"{year}수입"
 
     if ex_col not in df.columns or im_col not in df.columns:
         st.error(f"{year}년 데이터가 존재하지 않습니다.")
