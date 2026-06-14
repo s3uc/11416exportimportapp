@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-import os
+import numpy as np
+from sklearn.linear_model import LinearRegression
 
 # 페이지 설정
 st.set_page_config(
@@ -38,26 +39,26 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-
-
-exim = "exim.csv" 
+# 데이터 불러오기
 df = pd.read_csv("exim.csv")
 
-
-
-st.markdown("<h1 class='title'>📊 연도별 농림수산물 수출입 분석 시스템</h1>", unsafe_allow_html=True)
+# 제목
+st.markdown(
+    "<h1 class='title'>📊 연도별 농림수산물 수출입 분석 시스템</h1>",
+    unsafe_allow_html=True
+)
 
 st.markdown("""
 ### 🔍 조회 안내
+
 2010년 ~ 2022년 사이의 연도를 선택하면
 
 - 총 수출액
 - 총 수입액
-- 무역수지
 - 시군별 현황
-- AI 분석 코멘트
+- 미래 무역 예측
 
-를 확인할 수 있습니다.
+을 확인할 수 있습니다.
 """)
 
 # 연도 선택
@@ -66,56 +67,57 @@ year = st.selectbox(
     [str(i) for i in range(2010, 2023)]
 )
 
-# 변수 사전 선언 (NameError 원천 차단)
+# 컬럼명 생성
 ex_col = f"{year}수출"
 im_col = f"{year}수입"
 
-
-# 2. 분석 시작 메인 블록 (모든 들여쓰기를 4칸 스페이스로 완벽히 통일했습니다)
+# 분석 버튼
 if st.button("📈 분석 시작", use_container_width=True):
-    
+
     if ex_col not in df.columns or im_col not in df.columns:
         st.error(f"{year}년 데이터가 존재하지 않습니다.")
+
     else:
+
+        # 해당 연도 데이터 추출
         year_df = df[['행정구역(시군)별(1)', ex_col, im_col]].copy()
         year_df.columns = ['행정구역', '수출액', '수입액']
-        year_df['무역수지'] = year_df['수출액'] - year_df['수입액']
-        
-        # 원본에서 깨져있던 람다 함수 구문을 한 줄로 깔끔하게 처리했습니다.
-        year_df['상태'] = year_df['무역수지'].apply(lambda x: "🟢 흑자" if x >= 0 else "🔴 적자")
 
-        # 요약 계산
+        # 숫자 변환
+        year_df['수출액'] = pd.to_numeric(
+            year_df['수출액'],
+            errors='coerce'
+        ).fillna(0)
+
+        year_df['수입액'] = pd.to_numeric(
+            year_df['수입액'],
+            errors='coerce'
+        ).fillna(0)
+
+        # 총합 계산
         total_export = year_df['수출액'].sum()
         total_import = year_df['수입액'].sum()
-        trade_balance = total_export - total_import
 
+        # KPI
         st.markdown("---")
         st.subheader(f"🎯 {year}년 경상남도 농림수산물 무역 실적")
 
-        # KPI 카드
-        col1, col2, col3 = st.columns(3)
+        col1, col2 = st.columns(2)
 
         with col1:
             st.metric(
                 "💰 총 수출액",
-                f"{total_export:,.0f} 달러"
+                f"{total_export:,.0f}"
             )
 
         with col2:
             st.metric(
                 "🛒 총 수입액",
-                f"{total_import:,.0f} 달러"
+                f"{total_import:,.0f}"
             )
 
-        with col3:
-            st.metric(
-                "📊 무역수지",
-                f"{trade_balance:,.0f} 달러"
-            )
-
+        # 표
         st.markdown("---")
-
-        # 데이터 테이블
         st.subheader("🏙️ 시군별 세부 현황")
 
         st.dataframe(
@@ -124,42 +126,123 @@ if st.button("📈 분석 시작", use_container_width=True):
             height=500
         )
 
+        # ======================
+        # 미래 무역 예측 모델
+        # ======================
 
-        # AI 분석
-        max_import_city = year_df.sort_values(by='수입액', ascending=False).iloc[0]['행정구역']
-        max_export_city = year_df.sort_values(by='수출액', ascending=False).iloc[0]['행정구역']
+        years = []
+        exports = []
+        imports = []
+
+        for y in range(2010, 2023):
+
+            ex_model = f"{y}수출"
+            im_model = f"{y}수입"
+
+            if ex_model in df.columns and im_model in df.columns:
+
+                total_ex = pd.to_numeric(
+                    df[ex_model],
+                    errors='coerce'
+                ).fillna(0).sum()
+
+                total_im = pd.to_numeric(
+                    df[im_model],
+                    errors='coerce'
+                ).fillna(0).sum()
+
+                years.append(y)
+                exports.append(total_ex)
+                imports.append(total_im)
+
+        X = np.array(years).reshape(-1, 1)
+
+        export_model = LinearRegression()
+        export_model.fit(X, exports)
+
+        import_model = LinearRegression()
+        import_model.fit(X, imports)
+
+        # ======================
+        # 예측 UI
+        # ======================
 
         st.markdown("---")
-        st.subheader("🤖 AI 경제 분석")
+        st.subheader("🔮 미래 무역 예측")
 
-        with st.container():
-            st.markdown(
-                f"""
-                <div class="analysis-box">
-                <h4>📌 {year}년 분석 결과</h4>
-                <b>① 최대 수입 지역</b><br>
-                ▶ <b>{max_import_city}</b>이(가) 가장 많은 농림수산물을 수입했습니다.<br>
-                해외 공급망과 국제 가격 변동의 영향을 크게 받을 가능성이 있습니다.
-                <br><br>
-                <b>② 최대 수출 지역</b><br>
-                ▶ <b>{max_export_city}</b>이(가) 가장 많은 수출을 기록했습니다.<br>
-                지역 경제 활성화와 외화 획득에 중요한 역할을 수행했습니다.
-                <br><br>
-                <b>③ 종합 평가</b><br>
-                </div>
-                """,
-                unsafe_allow_html=True
+        future_year = st.number_input(
+            "예측할 연도를 입력하세요",
+            min_value=2023,
+            max_value=2050,
+            value=2025
+        )
+
+        if st.button("🚀 미래 무역 예측"):
+
+            predicted_export = export_model.predict(
+                [[future_year]]
+            )[0]
+
+            predicted_import = import_model.predict(
+                [[future_year]]
+            )[0]
+
+            predicted_balance = (
+                predicted_export
+                - predicted_import
             )
 
-            if trade_balance < 0:
-                st.warning(
-                    f"{year}년은 수입이 수출보다 많아 무역적자를 기록했습니다.\n\n"
-                    "고물가 상황에서 지역 내 생산 확대와 유통 효율화 정책이 필요합니다."
-                )
-            else:
-                st.success(
-                    f"{year}년은 수출이 수입보다 많아 무역흑자를 기록했습니다.\n\n"
-                    "지역 농림수산업의 경쟁력이 높은 시기로 평가할 수 있습니다."
+            st.markdown("### 📈 예측 결과")
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+                st.metric(
+                    "예상 수출액",
+                    f"{predicted_export:,.0f}"
                 )
 
-        st.balloons()
+            with col2:
+                st.metric(
+                    "예상 수입액",
+                    f"{predicted_import:,.0f}"
+                )
+
+            with col3:
+                st.metric(
+                    "예상 무역수지",
+                    f"{predicted_balance:,.0f}"
+                )
+
+            st.markdown("---")
+
+            if predicted_balance > 0:
+
+                st.success(
+                    f"""
+                    📈 {future_year}년은 무역흑자가 예상됩니다.
+
+                    예상 무역수지:
+                    {predicted_balance:,.0f}
+                    """
+                )
+
+            elif predicted_balance < 0:
+
+                st.error(
+                    f"""
+                    📉 {future_year}년은 무역적자가 예상됩니다.
+
+                    예상 무역수지:
+                    {predicted_balance:,.0f}
+                    """
+                )
+
+            else:
+
+                st.info(
+                    f"""
+                    ⚖️ {future_year}년은 수출과 수입이
+                    거의 동일할 것으로 예상됩니다.
+                    """
+                )
