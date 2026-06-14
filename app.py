@@ -38,7 +38,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # 데이터 불러오기
-# df = pd.read_csv("exim.csv")
+# df = pd.read_csv("your_file.csv")
 
 st.markdown("<h1 class='title'>📊 연도별 농림수산물 수출입 분석 시스템</h1>", unsafe_allow_html=True)
 
@@ -63,8 +63,8 @@ year = st.selectbox(
 
 if st.button("📈 분석 시작", use_container_width=True):
 
- ex_col = f"{year}수출"
- im_col = f"{year}수입"
+    ex_col = f"{year}수출"
+    im_col = f"{year}수입"
 
     if ex_col not in df.columns or im_col not in df.columns:
         st.error(f"{year}년 데이터가 존재하지 않습니다.")
