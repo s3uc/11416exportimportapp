@@ -41,7 +41,7 @@ st.markdown("""
 
 
 exim = "exim.csv" 
-
+df = pd.read_csv("exim.csv")
 if os.path.exists(exim):
     if exim.csv:
         df = pd.read_csv(exim)
