@@ -12,57 +12,95 @@ st.set_page_config(
     page_icon="📊",
     layout="wide"
 )
-
-# =========================
 st.markdown("""
 <style>
 
+/* 전체 배경 */
 .stApp {
     background:
     linear-gradient(
         135deg,
         #0f172a 0%,
-        #111827 40%,
+        #111827 50%,
         #1e293b 100%
     );
 }
 
+/* 제목 */
 .title {
     text-align: center;
     color: white;
     font-size: 3rem;
     font-weight: 800;
+    margin-bottom: 0;
 }
 
-h2, h3 {
-    color: white;
+/* 부제목 */
+.subtitle {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
 }
 
-p, label {
+/* 일반 텍스트 */
+p, label, div {
     color: #e5e7eb;
 }
 
+/* Metric 카드 */
 [data-testid="stMetric"] {
     background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 18px;
-    padding: 15px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 20px;
     backdrop-filter: blur(10px);
 }
 
+/* Metric 제목 */
 [data-testid="stMetricLabel"] {
     color: white;
 }
 
+/* Metric 값 */
 [data-testid="stMetricValue"] {
     color: #60a5fa;
+}
+
+/* 버튼 */
+.stButton > button {
+    width: 100%;
+    border-radius: 15px;
+    height: 55px;
+    font-size: 18px;
+    font-weight: bold;
+    background: linear-gradient(
+        90deg,
+        #2563eb,
+        #3b82f6
+    );
+    color: white;
+    border: none;
+}
+
+/* 입력창 */
+.stNumberInput input {
+    border-radius: 10px;
+}
+
+/* 그래프 영역 */
+.graph-card {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    margin-bottom: 20px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-</style>
-""", unsafe_allow_html=True)
+
 # =========================
 
 st.markdown("""
