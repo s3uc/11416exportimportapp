@@ -1,0 +1,6 @@
+pandas
+matplotlib
+seaborn
+koreanize-matplotlib
+scikit-learn
+joblib
