@@ -42,15 +42,7 @@ st.markdown("""
 
 exim = "exim.csv" 
 df = pd.read_csv("exim.csv")
-if os.path.exists(exim):
-    if exim.csv:
-        df = pd.read_csv(exim)
-    else:
-        df = pd.read_excel(exim)
-else:
-    st.error(f"📂 폴더에서 '{exim}' 파일을 찾을 수 없습니다.")
-    st.info("💡 코드 중반의 `exim = \"exim.csv\"` 부분에 실제 파일 이름을 정확히 적어주세요!")
-    st.stop()
+
 
 
 st.markdown("<h1 class='title'>📊 연도별 농림수산물 수출입 분석 시스템</h1>", unsafe_allow_html=True)
