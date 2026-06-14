@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import os
 
 # 페이지 설정
 st.set_page_config(
@@ -37,8 +38,20 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 데이터 불러오기
-# df = pd.read_csv("your_file.csv")
+
+
+exim = "exim.csv" 
+
+if os.path.exists(exim):
+    if exim.csv:
+        df = pd.read_csv(exim)
+    else:
+        df = pd.read_excel(exim)
+else:
+    st.error(f"📂 폴더에서 '{exim}' 파일을 찾을 수 없습니다.")
+    st.info("💡 코드 중반의 `exim = \"exim.csv\"` 부분에 실제 파일 이름을 정확히 적어주세요!")
+    st.stop()
+
 
 st.markdown("<h1 class='title'>📊 연도별 농림수산물 수출입 분석 시스템</h1>", unsafe_allow_html=True)
 
@@ -61,22 +74,23 @@ year = st.selectbox(
     [str(i) for i in range(2010, 2023)]
 )
 
-if st.button("📈 분석 시작", use_container_width=True):
-      ex_col = f"{year}수출"
-      im_col = f"{year}수입"
-     
-      if ex_col not in df.columns or im_col not in df.columns:
-          st.error(f"{year}년 데이터가 존재하지 않습니다.")
-      else:
-          year_df = df[['행정구역(시군)별(1)', ex_col, im_col]].copy()
-          year_df.columns = ['행정구역', '수출액', '수입액']
-          year_df['무역수지'] = year_df['수출액'] - year_df['수입액']
-          year_df['상태'] = year_df['무역수지'].apply(
-              lambda x: "🟢 흑자" if x >= 0 else "🔴 적자"      
-        
+# 변수 사전 선언 (NameError 원천 차단)
+ex_col = f"{year}수출"
+im_col = f"{year}수입"
 
-  
-        )
+
+# 2. 분석 시작 메인 블록 (모든 들여쓰기를 4칸 스페이스로 완벽히 통일했습니다)
+if st.button("📈 분석 시작", use_container_width=True):
+    
+    if ex_col not in df.columns or im_col not in df.columns:
+        st.error(f"{year}년 데이터가 존재하지 않습니다.")
+    else:
+        year_df = df[['행정구역(시군)별(1)', ex_col, im_col]].copy()
+        year_df.columns = ['행정구역', '수출액', '수입액']
+        year_df['무역수지'] = year_df['수출액'] - year_df['수입액']
+        
+        # 원본에서 깨져있던 람다 함수 구문을 한 줄로 깔끔하게 처리했습니다.
+        year_df['상태'] = year_df['무역수지'].apply(lambda x: "🟢 흑자" if x >= 0 else "🔴 적자")
 
         # 요약 계산
         total_export = year_df['수출액'].sum()
@@ -132,15 +146,8 @@ if st.button("📈 분석 시작", use_container_width=True):
         )
 
         # AI 분석
-        max_import_city = year_df.sort_values(
-            by='수입액',
-            ascending=False
-        ).iloc[0]['행정구역']
-
-        max_export_city = year_df.sort_values(
-            by='수출액',
-            ascending=False
-        ).iloc[0]['행정구역']
+        max_import_city = year_df.sort_values(by='수입액', ascending=False).iloc[0]['행정구역']
+        max_export_city = year_df.sort_values(by='수출액', ascending=False).iloc[0]['행정구역']
 
         st.markdown("---")
         st.subheader("🤖 AI 경제 분석")
@@ -149,22 +156,17 @@ if st.button("📈 분석 시작", use_container_width=True):
             st.markdown(
                 f"""
                 <div class="analysis-box">
-
                 <h4>📌 {year}년 분석 결과</h4>
-
                 <b>① 최대 수입 지역</b><br>
                 ▶ <b>{max_import_city}</b>이(가) 가장 많은 농림수산물을 수입했습니다.<br>
                 해외 공급망과 국제 가격 변동의 영향을 크게 받을 가능성이 있습니다.
-
                 <br><br>
-
                 <b>② 최대 수출 지역</b><br>
                 ▶ <b>{max_export_city}</b>이(가) 가장 많은 수출을 기록했습니다.<br>
                 지역 경제 활성화와 외화 획득에 중요한 역할을 수행했습니다.
-
                 <br><br>
-
                 <b>③ 종합 평가</b><br>
+                </div>
                 """,
                 unsafe_allow_html=True
             )
