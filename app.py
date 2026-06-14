@@ -72,7 +72,7 @@ ex_col = f"{year}수출"
 im_col = f"{year}수입"
 
 # 분석 버튼
-if st.button("📈 분석 시작", use_container_width=True):
+if ex_col in df.columns and im_col in df.columns:
 
     if ex_col not in df.columns or im_col not in df.columns:
         st.error(f"{year}년 데이터가 존재하지 않습니다.")
