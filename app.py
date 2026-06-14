@@ -18,18 +18,48 @@ st.markdown("""
 <style>
 
 .stApp {
-    background: linear-gradient(
-        180deg,
-        #f4f8fc 0%,
-        #ffffff 100%
+    background:
+    linear-gradient(
+        135deg,
+        #0f172a 0%,
+        #111827 40%,
+        #1e293b 100%
     );
 }
 
 .title {
-    text-align:center;
-    color:#0f172a;
-    font-weight:700;
+    text-align: center;
+    color: white;
+    font-size: 3rem;
+    font-weight: 800;
 }
+
+h2, h3 {
+    color: white;
+}
+
+p, label {
+    color: #e5e7eb;
+}
+
+[data-testid="stMetric"] {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 18px;
+    padding: 15px;
+    backdrop-filter: blur(10px);
+}
+
+[data-testid="stMetricLabel"] {
+    color: white;
+}
+
+[data-testid="stMetricValue"] {
+    color: #60a5fa;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 </style>
 """, unsafe_allow_html=True)
